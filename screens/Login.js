@@ -30,45 +30,62 @@ const Login=({navigation})=> {
     const [password,setPassword]=useState('');
     
     const [next,setNext]=useState(false);
-    const [loading,setLoading]=useState(false)
-
+    
+        // Set an initializing state whilst Firebase connects
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
   
-
+    const [loading,setLoading]=useState(false)
     if (loading){
       return <ActivityIndicator size="large" color="#00ff00" />
     }
 
 
-
-    // useEffect(()=>{
-
-    //  const unregister =  auth().onAuthStateChanged((authUser)=>{
-
-    //     if (authUser){
-    //         navigation.replace('home');
-
-    //     }
-
-    //     return unregister();
+    
+  // Handle user state changes
+  // function onAuthStateChanged(user) {
+  //   setUser(user);
+  //   if (initializing) setInitializing(false);
+  // }
 
 
+    useEffect(()=>{
 
-    //   })
+     const unregister =  auth().onAuthStateChanged((authUser)=>{
+
+        if (authUser){
+            navigation.replace('home');
+
+        }
+
+        return unregister();
+
+
+
+      })},[])
+
+    
+  // useEffect(() => {
+  //   const unregister = auth().onAuthStateChanged(onAuthStateChanged);
+  //   return ; // unsubscribe on unmount
+  // }, []);
+
+  // if (initializing) return null;
+
 
        
 
 
-    // }, [])
+  //   // }, [])
 
 
 
 
     const signIn= async()=>{
       if (!email || !password ){
-          alert('Please input all fields')
-          setLoading(false)
 
-          return
+          return          alert('Please input all fields')
+
         
       }
       
@@ -79,8 +96,9 @@ try {
   const result = await auth().signInWithEmailAndPassword(email,password)
 
   
-    setLoading(false)
    alert('Loggen In Successfully')
+
+   setLoading(false)
 }
 catch (err){
   alert(err)
@@ -178,7 +196,7 @@ catch (err){
             <Text style={{color:'white',fontSize:25,}}>Login</Text>
           </TouchableOpacity> */}
           <View>
-          <Button variant="contained" title='Hello' onPress={signIn}></Button>
+          <Button variant="contained" title='Hello' onPress={()=>signIn()}></Button>
           </View>
           <TouchableOpacity   onPress={()=>navigation.goBack()}>
                           <Text style={{textAlign:'center'}}>Don't have an Account? Sign Up!</Text>
